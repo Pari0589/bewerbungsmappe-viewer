@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bewerbungsmappe – Viewer</title>
+  <style>
+    body { font-family: system-ui; background:#f6f7f9; padding:20px; }
+    .card { background:white; padding:20px; border-radius:12px; margin-bottom:20px; }
+    .ok { color:green; font-weight:bold; }
+    .bad { color:red; font-weight:bold; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Bewerbungsmappe</h2>
+  <div id="status">Verbinden...</div>
+</div>
+
+<div class="card">
+  <h3>Dokumente</h3>
+  <ul id="docs"></ul>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const shareId = params.get("shareId");
+const token = params.get("t");
+
+if (!shareId || !token) {
+  document.getElementById("status").innerHTML = "<span class='bad'>Fehlende Parameter</span>";
+} else {
+
+  const viewerId = localStorage.getItem("viewerId") || crypto.randomUUID();
+  localStorage.setItem("viewerId", viewerId);
+
+  const streamUrl =
+    "https://cylqwswkekqwfefqmgya.functions.supabase.co/share_stream" +
+    "?shareId=" + encodeURIComponent(shareId) +
+    "&t=" + encodeURIComponent(token) +
+    "&v=" + encodeURIComponent(viewerId);
+
+  const es = new EventSource(streamUrl);
+
+  es.addEventListener("open", () => {
+    document.getElementById("status").innerHTML =
+      "<span class='ok'>Live verbunden</span>";
+  });
+
+  es.addEventListener("status", (ev) => {
+    const data = JSON.parse(ev.data);
+    if (!data.ok) {
+      document.getElementById("status").innerHTML =
+        "<span class='bad'>" + data.message + "</span>";
+    }
+  });
+
+  es.addEventListener("update", (ev) => {
+    const data = JSON.parse(ev.data);
+    const docs = data.documents || [];
+
+    const ul = document.getElementById("docs");
+    ul.innerHTML = "";
+
+    if (docs.length === 0) {
+      ul.innerHTML = "<li>Keine Dokumente ausgewählt</li>";
+      return;
+    }
+
+    docs.forEach(d => {
+      const li = document.createElement("li");
+      li.textContent = d.title || d.id;
+      ul.appendChild(li);
+    });
+  });
+}
+</script>
+
+</body>
+</html>
