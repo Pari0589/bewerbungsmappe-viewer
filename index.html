@@ -5,35 +5,131 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Bewerbungsmappe – Viewer</title>
   <style>
-    body { font-family: system-ui; background:#f6f7f9; padding:20px; }
-    .card { background:white; padding:20px; border-radius:12px; margin-bottom:20px; }
-    .ok { color:green; font-weight:bold; }
-    .bad { color:red; font-weight:bold; }
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    body { margin:0; background:#f6f7f9; color:#111; padding:20px; }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    .card { background:#fff; border-radius:14px; padding:18px; box-shadow: 0 6px 24px rgba(0,0,0,.06); margin-bottom:14px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .title { margin:0; font-size:20px; font-weight:800; }
+    .badge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:800; font-size:13px; background:#eee; }
+    .ok { background:#e8f7ee; color:#0b6b2f; }
+    .bad { background:#fdecec; color:#8a1414; }
+    .muted { color:#666; }
+    .kv { display:flex; gap:18px; flex-wrap:wrap; margin-top:10px; }
+    .kv > div { min-width: 180px; }
+    .label { font-size:12px; color:#666; margin-bottom:4px; }
+    .value { font-size:14px; font-weight:700; }
+    ul { margin:10px 0 0; padding-left:18px; }
+    li { margin-bottom:10px; }
+    .doc-title { font-weight:800; }
+    .pill { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; background:#f0f0f0; font-size:12px; font-weight:800; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; font-size:12px; }
+    .warn { background:#fff7e6; color:#7a4b00; padding:10px 12px; border-radius:12px; }
   </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="card">
-  <h2>Bewerbungsmappe</h2>
-  <div id="status">Verbinden...</div>
-</div>
+  <div class="card">
+    <div class="row">
+      <h1 class="title">Bewerbungsmappe</h1>
+      <span id="conn" class="badge">Verbinden…</span>
+    </div>
 
-<div class="card">
-  <h3>Dokumente</h3>
-  <ul id="docs"></ul>
+    <div class="row" style="justify-content:flex-start; margin-top:10px;">
+      <span id="statusBadge" class="badge">Status: …</span>
+      <span id="statusText" class="muted">–</span>
+    </div>
+
+    <div class="kv">
+      <div>
+        <div class="label">Aufrufe</div>
+        <div class="value" id="views">–</div>
+      </div>
+      <div>
+        <div class="label">Zuletzt angesehen</div>
+        <div class="value" id="lastViewed">–</div>
+      </div>
+      <div>
+        <div class="label">Ausgewählt</div>
+        <div class="value" id="selCount">–</div>
+      </div>
+    </div>
+
+    <div id="warning" class="warn" style="display:none; margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content:flex-start;">
+      <div style="font-size:16px;font-weight:900;">Dokumente</div>
+      <div class="muted" id="docsHint">Warte auf Updates…</div>
+    </div>
+    <ul id="docs"></ul>
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content:flex-start;">
+      <div style="font-size:16px;font-weight:900;">Debug (optional)</div>
+      <div class="muted mono" id="dbgUrl"></div>
+    </div>
+    <pre class="mono" id="dbgJson" style="white-space:pre-wrap; word-break:break-word; margin:10px 0 0; background:#fafafa; border-radius:12px; padding:12px;"></pre>
+  </div>
+
 </div>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const shareId = params.get("shareId");
-const token = params.get("t");
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const shareId = params.get("shareId");
+  const token  = params.get("t");
 
-if (!shareId || !token) {
-  document.getElementById("status").innerHTML = "<span class='bad'>Fehlende Parameter</span>";
-} else {
+  const elConn = document.getElementById("conn");
+  const elStatusBadge = document.getElementById("statusBadge");
+  const elStatusText = document.getElementById("statusText");
+  const elViews = document.getElementById("views");
+  const elLastViewed = document.getElementById("lastViewed");
+  const elSelCount = document.getElementById("selCount");
+  const elDocsHint = document.getElementById("docsHint");
+  const elDocs = document.getElementById("docs");
+  const elWarn = document.getElementById("warning");
+  const elDbgUrl = document.getElementById("dbgUrl");
+  const elDbgJson = document.getElementById("dbgJson");
 
-  const viewerId = localStorage.getItem("viewerId") || crypto.randomUUID();
-  localStorage.setItem("viewerId", viewerId);
+  function setConn(text, ok) {
+    elConn.textContent = text;
+    elConn.className = "badge " + (ok ? "ok" : "bad");
+  }
+  function setStatus(ok, label, msg) {
+    elStatusBadge.textContent = "Status: " + label;
+    elStatusBadge.className = "badge " + (ok ? "ok" : "bad");
+    elStatusText.textContent = msg || "";
+  }
+  function fmtDate(iso) {
+    if (!iso) return "–";
+    try { return new Date(iso).toLocaleString(); } catch (_) { return iso; }
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function showWarn(text) {
+    elWarn.style.display = text ? "block" : "none";
+    elWarn.textContent = text || "";
+  }
+
+  if (!shareId || !token) {
+    setConn("Fehler", false);
+    setStatus(false, "BAD_REQUEST", "Fehlende Parameter (shareId / t).");
+    showWarn("Die URL muss so aussehen: ?shareId=...&t=...");
+    return;
+  }
+
+  // stable viewer id
+  const key = "bm_viewer_id";
+  let viewerId = localStorage.getItem(key);
+  if (!viewerId) {
+    viewerId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + "_" + Math.random()));
+    localStorage.setItem(key, viewerId);
+  }
 
   const streamUrl =
     "https://cylqwswkekqwfefqmgya.functions.supabase.co/share_stream" +
@@ -41,41 +137,87 @@ if (!shareId || !token) {
     "&t=" + encodeURIComponent(token) +
     "&v=" + encodeURIComponent(viewerId);
 
+  elDbgUrl.textContent = streamUrl;
+
+  setConn("Verbinden…", true);
+  setStatus(true, "…", "Warte auf Status…");
+
   const es = new EventSource(streamUrl);
 
   es.addEventListener("open", () => {
-    document.getElementById("status").innerHTML =
-      "<span class='ok'>Live verbunden</span>";
+    setConn("Live verbunden", true);
+    showWarn("");
+  });
+
+  es.addEventListener("error", () => {
+    setConn("Verbindung verloren (reconnect…)", false);
+    showWarn("Die Verbindung zum Live-Stream ist unterbrochen. Der Browser versucht automatisch neu zu verbinden.");
   });
 
   es.addEventListener("status", (ev) => {
-    const data = JSON.parse(ev.data);
-    if (!data.ok) {
-      document.getElementById("status").innerHTML =
-        "<span class='bad'>" + data.message + "</span>";
-    }
+    try {
+      const data = JSON.parse(ev.data);
+
+      // counts/status
+      if (data.ok) {
+        setStatus(true, "Aktiv", "Live-Ansicht ist aktiv.");
+        if (typeof data.view_count !== "undefined") elViews.textContent = String(data.view_count);
+        if (data.last_viewed_at) elLastViewed.textContent = fmtDate(data.last_viewed_at);
+        if (data.warning) showWarn(String(data.warning));
+      } else {
+        setStatus(false, data.code || "INAKTIV", data.message || "");
+        if (typeof data.view_count !== "undefined") elViews.textContent = String(data.view_count);
+        if (data.last_viewed_at) elLastViewed.textContent = fmtDate(data.last_viewed_at);
+      }
+    } catch (_) {}
   });
 
   es.addEventListener("update", (ev) => {
-    const data = JSON.parse(ev.data);
-    const docs = data.documents || [];
+    try {
+      const data = JSON.parse(ev.data);
+      elDbgJson.textContent = JSON.stringify(data, null, 2);
 
-    const ul = document.getElementById("docs");
-    ul.innerHTML = "";
+      const docs = Array.isArray(data.documents) ? data.documents : [];
+      elSelCount.textContent = String(docs.length);
 
-    if (docs.length === 0) {
-      ul.innerHTML = "<li>Keine Dokumente ausgewählt</li>";
-      return;
-    }
+      elDocs.innerHTML = "";
 
-    docs.forEach(d => {
-      const li = document.createElement("li");
-      li.textContent = d.title || d.id;
-      ul.appendChild(li);
-    });
+      if (docs.length === 0) {
+        elDocsHint.textContent = "Keine Dokumente ausgewählt.";
+        const li = document.createElement("li");
+        li.className = "muted";
+        li.textContent = "Keine Dokumente ausgewählt.";
+        elDocs.appendChild(li);
+        return;
+      }
+
+      elDocsHint.textContent = "Aktuelle Auswahl (live):";
+
+      docs.forEach((d) => {
+        const li = document.createElement("li");
+
+        if (d.missing) {
+          li.innerHTML =
+            "<span class='doc-title'>Fehlt in documents_live</span><span class='pill'>missing</span>" +
+            "<br><span class='mono'>" + esc(d.id) + "</span>";
+          elDocs.appendChild(li);
+          return;
+        }
+
+        const title = d.title || "(ohne Titel)";
+        const type  = d.type  || "(ohne Typ)";
+        li.innerHTML =
+          "<span class='doc-title'>" + esc(title) + "</span>" +
+          "<span class='pill'>" + esc(type) + "</span>" +
+          "<br><span class='mono'>" + esc(d.id) + "</span>";
+
+        elDocs.appendChild(li);
+      });
+
+    } catch (_) {}
   });
-}
-</script>
 
+})();
+</script>
 </body>
 </html>
