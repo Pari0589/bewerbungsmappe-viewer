@@ -25,6 +25,7 @@
     .pill { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; background:#f0f0f0; font-size:12px; font-weight:800; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; font-size:12px; }
     .warn { background:#fff7e6; color:#7a4b00; padding:10px 12px; border-radius:12px; }
+    a { font-weight: 800; }
   </style>
 </head>
 <body>
@@ -131,8 +132,20 @@
     localStorage.setItem(key, viewerId);
   }
 
+  const FUNCTIONS_BASE = "https://cylqwswkekqwfefqmgya.functions.supabase.co";
+
+  function buildDownloadUrl(docId) {
+    return (
+      FUNCTIONS_BASE +
+      "/download" +
+      "?shareId=" + encodeURIComponent(shareId) +
+      "&t=" + encodeURIComponent(token) +
+      "&docId=" + encodeURIComponent(docId)
+    );
+  }
+
   const streamUrl =
-    "https://cylqwswkekqwfefqmgya.functions.supabase.co/share_stream" +
+    FUNCTIONS_BASE + "/share_stream" +
     "?shareId=" + encodeURIComponent(shareId) +
     "&t=" + encodeURIComponent(token) +
     "&v=" + encodeURIComponent(viewerId);
@@ -158,7 +171,6 @@
     try {
       const data = JSON.parse(ev.data);
 
-      // counts/status
       if (data.ok) {
         setStatus(true, "Aktiv", "Live-Ansicht ist aktiv.");
         if (typeof data.view_count !== "undefined") elViews.textContent = String(data.view_count);
@@ -206,10 +218,13 @@
 
         const title = d.title || "(ohne Titel)";
         const type  = d.type  || "(ohne Typ)";
+        const openUrl = buildDownloadUrl(d.id);
+
         li.innerHTML =
           "<span class='doc-title'>" + esc(title) + "</span>" +
           "<span class='pill'>" + esc(type) + "</span>" +
-          "<br><span class='mono'>" + esc(d.id) + "</span>";
+          "<br><span class='mono'>" + esc(d.id) + "</span>" +
+          "<br><a href='" + esc(openUrl) + "' target='_blank' rel='noopener'>Dokument öffnen</a>";
 
         elDocs.appendChild(li);
       });
