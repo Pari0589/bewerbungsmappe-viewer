@@ -144,6 +144,7 @@
     );
   }
 
+  // ✅ FIX: streamUrl korrekt + stabil
   const streamUrl =
     FUNCTIONS_BASE + "/share_stream" +
     "?shareId=" + encodeURIComponent(shareId) +
@@ -184,53 +185,73 @@
     } catch (_) {}
   });
 
-  es.addEventListener("update", (ev) => {
-    try {
-      const data = JSON.parse(ev.data);
-      elDbgJson.textContent = JSON.stringify(data, null, 2);
+  // ✅ Robust: akzeptiert data.documents, data.docs oder direkt Array
+  function extractDocs(payload) {
+    if (Array.isArray(payload)) return payload;
+    if (payload && Array.isArray(payload.documents)) return payload.documents;
+    if (payload && Array.isArray(payload.docs)) return payload.docs;
+    if (payload && payload.data && Array.isArray(payload.data.documents)) return payload.data.documents;
+    if (payload && payload.data && Array.isArray(payload.data.docs)) return payload.data.docs;
+    return [];
+  }
 
-      const docs = Array.isArray(data.documents) ? data.documents : [];
-      elSelCount.textContent = String(docs.length);
+  function renderDocs(docs) {
+    elSelCount.textContent = String(docs.length);
+    elDocs.innerHTML = "";
 
-      elDocs.innerHTML = "";
+    if (docs.length === 0) {
+      elDocsHint.textContent = "Keine Dokumente ausgewählt.";
+      const li = document.createElement("li");
+      li.className = "muted";
+      li.textContent = "Keine Dokumente ausgewählt.";
+      elDocs.appendChild(li);
+      return;
+    }
 
-      if (docs.length === 0) {
-        elDocsHint.textContent = "Keine Dokumente ausgewählt.";
-        const li = document.createElement("li");
-        li.className = "muted";
-        li.textContent = "Keine Dokumente ausgewählt.";
+    elDocsHint.textContent = "Aktuelle Auswahl (live):";
+
+    docs.forEach((d) => {
+      const li = document.createElement("li");
+
+      if (d && d.missing) {
+        li.innerHTML =
+          "<span class='doc-title'>Fehlt in documents_live</span><span class='pill'>missing</span>" +
+          "<br><span class='mono'>" + esc(d.id) + "</span>";
         elDocs.appendChild(li);
         return;
       }
 
-      elDocsHint.textContent = "Aktuelle Auswahl (live):";
+      const title = (d && (d.title ?? d.name)) || "(ohne Titel)";
+      const type  = (d && (d.type  ?? d.mime)) || "(ohne Typ)";
+      const openUrl = buildDownloadUrl(d.id);
 
-      docs.forEach((d) => {
-        const li = document.createElement("li");
+      li.innerHTML =
+        "<span class='doc-title'>" + esc(title) + "</span>" +
+        "<span class='pill'>" + esc(type) + "</span>" +
+        "<br><span class='mono'>" + esc(d.id) + "</span>" +
+        "<br><a href='" + esc(openUrl) + "' target='_blank' rel='noopener'>Dokument öffnen</a>";
 
-        if (d.missing) {
-          li.innerHTML =
-            "<span class='doc-title'>Fehlt in documents_live</span><span class='pill'>missing</span>" +
-            "<br><span class='mono'>" + esc(d.id) + "</span>";
-          elDocs.appendChild(li);
-          return;
-        }
+      elDocs.appendChild(li);
+    });
+  }
 
-        const title = d.title || "(ohne Titel)";
-        const type  = d.type  || "(ohne Typ)";
-        const openUrl = buildDownloadUrl(d.id);
+  function handleUpdate(ev) {
+    try {
+      const payload = JSON.parse(ev.data);
+      elDbgJson.textContent = JSON.stringify(payload, null, 2);
+      const docs = extractDocs(payload);
+      renderDocs(docs);
+    } catch (e) {
+      // ✅ Zeige Fehler im Debug
+      elDbgJson.textContent = "JSON Parse Error:\n" + String(ev.data);
+    }
+  }
 
-        li.innerHTML =
-          "<span class='doc-title'>" + esc(title) + "</span>" +
-          "<span class='pill'>" + esc(type) + "</span>" +
-          "<br><span class='mono'>" + esc(d.id) + "</span>" +
-          "<br><a href='" + esc(openUrl) + "' target='_blank' rel='noopener'>Dokument öffnen</a>";
+  // ✅ Backend sendet event:update
+  es.addEventListener("update", handleUpdate);
 
-        elDocs.appendChild(li);
-      });
-
-    } catch (_) {}
-  });
+  // ✅ Fallback: falls Backend default message sendet
+  es.onmessage = handleUpdate;
 
 })();
 </script>
