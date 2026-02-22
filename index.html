@@ -18,7 +18,6 @@
       --brandA: #1f6feb;
       --brandB: #00b894;
 
-      /* Entwurf: softer, weniger „heavy“ */
       --radius: 22px;
       --shadow: 0 18px 40px rgba(2,6,23,.06);
       --shadowSoft: 0 10px 26px rgba(2,6,23,.05);
@@ -58,7 +57,6 @@
       margin-bottom: 18px;
     }
 
-    /* Header */
     .topbar{
       display:flex;
       align-items:flex-start;
@@ -89,7 +87,7 @@
     .brandTitle{
       margin:0;
       font-size: 40px;
-      font-weight: 800;         /* weniger fett */
+      font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1.04;
     }
@@ -98,13 +96,13 @@
       margin-top: 8px;
       color: var(--muted);
       font-size: 16px;
-      font-weight: 600;         /* leichter */
+      font-weight: 600;
     }
 
     .rolePill{
       padding: 12px 18px;
       border-radius: 999px;
-      font-weight: 700;         /* weniger fett */
+      font-weight: 700;
       border: 1px solid rgba(11,107,47,.18);
       background: linear-gradient(180deg, rgba(0,184,148,.18), rgba(0,184,148,.08));
       color: var(--okFg);
@@ -112,7 +110,6 @@
       font-size: 16px;
     }
 
-    /* Status container */
     .statusWrap{
       margin-top: 22px;
       padding: 20px;
@@ -135,7 +132,7 @@
       align-items:center;
       gap: 12px;
       font-size: 20px;
-      font-weight: 700;         /* weniger fett */
+      font-weight: 700;
       letter-spacing: -0.01em;
     }
 
@@ -156,7 +153,7 @@
       gap: 10px;
       padding: 10px 14px;
       border-radius: 999px;
-      font-weight: 700;         /* weniger fett */
+      font-weight: 700;
       font-size: 15px;
       background: var(--chipBg);
       color: var(--chipFg);
@@ -176,11 +173,10 @@
 
     .statusText{
       color: var(--muted);
-      font-weight: 600;         /* leichter */
+      font-weight: 600;
       font-size: 20px;
     }
 
-    /* KPI chips like mockup */
     .kpiRow{
       margin-top: 16px;
       display:flex;
@@ -197,7 +193,7 @@
       border: 1px solid rgba(15,23,42,.10);
       background: rgba(255,255,255,.85);
       box-shadow: 0 10px 18px rgba(2,6,23,.04);
-      font-weight: 650;         /* nicht fett */
+      font-weight: 650;
       color: #1f2937;
       white-space: nowrap;
     }
@@ -215,7 +211,6 @@
       font-weight: 650;
     }
 
-    /* Documents */
     .docsHeader{
       display:flex;
       align-items:flex-start;
@@ -229,7 +224,7 @@
       align-items:center;
       gap: 12px;
       font-size: 28px;
-      font-weight: 800;        /* weniger fett */
+      font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1.1;
     }
@@ -238,7 +233,7 @@
     .docsSub{
       margin-top: 6px;
       color: var(--muted);
-      font-weight: 600;        /* leichter */
+      font-weight: 600;
       font-size: 18px;
     }
 
@@ -248,7 +243,7 @@
       background: rgba(31,111,235,.08);
       border: 1px solid rgba(31,111,235,.16);
       color: #1f4f9f;
-      font-weight: 650;        /* leichter */
+      font-weight: 650;
       font-size: 16px;
       white-space: nowrap;
     }
@@ -280,7 +275,6 @@
       flex: 1 1 auto;
     }
 
-    /* Illustration tile (Preview-like) */
     .illus{
       width: 78px;
       height: 78px;
@@ -349,7 +343,7 @@
     .docTitle{
       margin: 0;
       font-size: 22px;
-      font-weight: 800;        /* weniger fett */
+      font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1.12;
       overflow:hidden;
@@ -385,7 +379,6 @@
       word-break: break-word;
     }
 
-    /* Soft Button (ohne PDF/Typ) */
     .openBtn{
       display:inline-flex;
       align-items:center;
@@ -430,7 +423,6 @@
       font-size: 16px;
     }
 
-    /* Mobile */
     @media (max-width: 720px){
       body{ padding: 16px; }
       .card{ padding: 18px; }
@@ -440,7 +432,6 @@
       .docTitle{ max-width: 100%; }
     }
 
-    /* Debug */
     details summary{
       cursor:pointer;
       user-select:none;
@@ -471,7 +462,6 @@
 <body>
 <div class="wrap">
 
-  <!-- HEADER + STATUS -->
   <div class="card">
     <div class="topbar">
       <div class="brand">
@@ -527,7 +517,6 @@
     </div>
   </div>
 
-  <!-- DOCUMENTS -->
   <div class="card">
     <div class="docsHeader">
       <div>
@@ -539,14 +528,12 @@
         </div>
         <div class="docsSub" id="docsHint">Warte auf Updates…</div>
       </div>
-
       <div class="docsCount" id="docsCount">– Dokumente freigegeben</div>
     </div>
 
     <div id="docs" class="list"></div>
   </div>
 
-  <!-- DEBUG -->
   <div class="card">
     <details>
       <summary>Debug (optional)</summary>
@@ -671,7 +658,6 @@
   function themeForType(type) {
     const t = String(type || "").toLowerCase();
 
-    // SCHUFA (blue)
     if (t.includes("schufa") || t.includes("bon")) {
       return {
         tintA: "rgba(129,200,255,.55)",
@@ -683,7 +669,6 @@
       };
     }
 
-    // Income (green)
     if (t.includes("income") || t.includes("gehalt") || t.includes("salary") || t.includes("lohn")) {
       return {
         tintA: "rgba(153,230,192,.55)",
@@ -695,7 +680,6 @@
       };
     }
 
-    // ID (beige)
     if (t.includes("ausweis") || t.includes("id") || t.includes("ident")) {
       return {
         tintA: "rgba(245,220,170,.55)",
@@ -707,7 +691,6 @@
       };
     }
 
-    // Default
     return {
       tintA: "rgba(210,222,238,.55)",
       tintB: "rgba(244,247,252,.56)",
@@ -804,7 +787,6 @@
 
       const selectedIds = extractSelectedIds(payload);
       const rawDocs = extractDocs(payload);
-      );
       const docs = filterDocsToSelected(rawDocs, selectedIds);
 
       renderDocs(docs, selectedIds, payload);
@@ -828,7 +810,7 @@
       if (data.ok) {
         setStatus(true, "Freigabe aktiv", "Live-Ansicht ist aktiv.");
         if (typeof data.view_count !== "undefined") elViews.textContent = String(data.view_count);
-        if (data.last_viewed_at) elLastViewed.textContent = "gerade eben";
+        if (data.last_viewed_at) elLastViewed.textContent = fmtDate(data.last_viewed_at);
       } else {
         setStatus(false, data.code || "INAKTIV", data.message || "");
       }
