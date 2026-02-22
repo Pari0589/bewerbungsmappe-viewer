@@ -10,7 +10,7 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color-scheme: light;
 
-      --bg: #f5f7fb;
+      --bg: #f4f6fb;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -19,7 +19,8 @@
       --brandB: #00b894;
 
       --radius: 18px;
-      --shadow: 0 12px 30px rgba(2,6,23,.08);
+      --shadow: 0 14px 34px rgba(2,6,23,.08);
+      --shadowSoft: 0 8px 20px rgba(2,6,23,.06);
       --border: rgba(15,23,42,.10);
 
       --okBg: #e8f7ee;
@@ -28,220 +29,234 @@
       --badBg: #fdecec;
       --badFg: #8a1414;
 
-      --chipBg: #eef2f6;
-      --chipFg: #111827;
-
-      --btnBg: #0f172a;
-      --btnFg: #fff;
-      --btnHover: #142043;
-
       --warnBg: #fff7e6;
       --warnFg: #7a4b00;
+
+      --chipBg: #eef2f6;
+      --chipFg: #111827;
     }
 
     *{ box-sizing:border-box; }
     body{
       margin:0;
       background:
-        radial-gradient(1200px 600px at 15% -10%, rgba(31,111,235,.12), transparent 60%),
+        radial-gradient(1200px 600px at 15% -10%, rgba(31,111,235,.14), transparent 60%),
         radial-gradient(900px 500px at 95% 0%, rgba(0,184,148,.12), transparent 55%),
         var(--bg);
       color: var(--text);
       padding: 18px;
     }
-
     .wrap{ max-width: 980px; margin: 0 auto; }
 
     .card{
       background: var(--card);
-      border-radius: var(--radius);
+      border-radius: 22px;
       box-shadow: var(--shadow);
       border: 1px solid rgba(15,23,42,.06);
-      padding: 18px;
+      padding: 22px;
       margin-bottom: 14px;
     }
 
-    /* Header (Brand + Vermieteransicht) */
+    /* Header */
     .topbar{
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap: 12px;
+      gap: 14px;
       min-width: 260px;
     }
 
     .logo{
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
       background: linear-gradient(135deg, var(--brandA), var(--brandB));
-      box-shadow: 0 10px 20px rgba(31,111,235,.16);
+      box-shadow: 0 14px 26px rgba(31,111,235,.18);
       display:grid;
       place-items:center;
       flex: 0 0 auto;
     }
-    .logo svg{ width: 26px; height: 26px; color:#fff; }
+    .logo svg{ width: 30px; height: 30px; color:#fff; }
 
     .brandTitle{
       margin:0;
-      font-size: 34px;
+      font-size: 42px;
       font-weight: 1000;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
+      letter-spacing: -0.045em;
+      line-height: 1.02;
     }
 
     .brandSub{
-      margin-top: 6px;
+      margin-top: 8px;
       color: var(--muted);
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 750;
     }
 
     .rolePill{
-      padding: 10px 14px;
+      padding: 12px 18px;
       border-radius: 999px;
       font-weight: 950;
       border: 1px solid rgba(11,107,47,.18);
-      background: linear-gradient(180deg, rgba(0,184,148,.20), rgba(0,184,148,.10));
+      background: linear-gradient(180deg, rgba(0,184,148,.18), rgba(0,184,148,.08));
       color: var(--okFg);
       white-space: nowrap;
+      font-size: 16px;
     }
 
-    /* Status Panel */
-    .statusCard{
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px;
-      background: linear-gradient(180deg, rgba(15,23,42,.02), transparent 60%);
-      margin-top: 14px;
+    /* Status container */
+    .statusWrap{
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(15,23,42,.08);
+      background: linear-gradient(180deg, rgba(15,23,42,.02), rgba(255,255,255,.70));
+      box-shadow: var(--shadowSoft);
     }
 
     .statusHeader{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .statusLeft{
       display:flex;
       align-items:center;
-      gap: 10px;
-      font-size: 18px;
+      gap: 12px;
+      font-size: 22px;
       font-weight: 1000;
+      letter-spacing: -0.02em;
     }
 
-    .statusLeft .dotIcon{
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
+    .statusIcon{
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
       display:grid;
       place-items:center;
       background: rgba(0,184,148,.12);
       border: 1px solid rgba(0,184,148,.22);
     }
-    .statusLeft .dotIcon svg{ width: 18px; height: 18px; color: var(--okFg); }
+    .statusIcon svg{ width: 22px; height: 22px; color: var(--okFg); }
 
     .badge{
       display:inline-flex;
       align-items:center;
-      gap: 8px;
-      padding: 8px 12px;
+      gap: 10px;
+      padding: 10px 14px;
       border-radius: 999px;
       font-weight: 950;
-      font-size: 13px;
+      font-size: 14px;
       background: var(--chipBg);
       color: var(--chipFg);
-      border: 1px solid rgba(15,23,42,.08);
+      border: 1px solid rgba(15,23,42,.10);
       white-space: nowrap;
     }
-
     .ok{ background: var(--okBg); color: var(--okFg); border-color: rgba(11,107,47,.18); }
     .bad{ background: var(--badBg); color: var(--badFg); border-color: rgba(138,20,20,.18); }
 
-    .miniRow{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items:center;
+    .statusLine{
       margin-top: 12px;
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .miniChip{
+    .statusText{
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    /* KPI chips like preview */
+    .kpiRow{
+      margin-top: 14px;
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .kpi{
       display:inline-flex;
       align-items:center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(15,23,42,.08);
-      background: #fff;
-      box-shadow: 0 6px 18px rgba(2,6,23,.05);
-      font-weight: 900;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.85);
+      box-shadow: 0 10px 18px rgba(2,6,23,.05);
+      font-weight: 950;
       color: #111827;
       white-space: nowrap;
     }
-    .miniChip svg{ width: 18px; height: 18px; color: #334155; opacity:.9; }
-    .miniChip .muted{ color: var(--muted); font-weight: 800; }
+    .kpi svg{ width: 20px; height: 20px; color: #334155; opacity:.9; }
+    .kpi .muted{ color: var(--muted); font-weight: 850; }
 
     .warn{
-      margin-top: 12px;
+      margin-top: 14px;
       background: var(--warnBg);
       color: var(--warnFg);
       padding: 12px 14px;
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid rgba(122,75,0,.18);
       display:none;
-      font-weight: 800;
+      font-weight: 850;
     }
 
     /* Documents */
-    .docsTop{
+    .docsHeader{
       display:flex;
-      justify-content:space-between;
       align-items:flex-start;
-      gap: 12px;
+      justify-content:space-between;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
     .docsTitle{
       display:flex;
       align-items:center;
-      gap: 10px;
-      font-size: 22px;
+      gap: 12px;
+      font-size: 28px;
       font-weight: 1000;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
     }
-    .docsTitle svg{ width: 22px; height: 22px; color: var(--brandA); }
+    .docsTitle svg{ width: 26px; height: 26px; color: #2b6cb0; }
+
+    .docsSub{
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 18px;
+    }
 
     .docsCount{
-      padding: 10px 12px;
+      padding: 12px 16px;
       border-radius: 999px;
-      background: rgba(31,111,235,.08);
+      background: rgba(31,111,235,.10);
       border: 1px solid rgba(31,111,235,.18);
       color: #12458f;
       font-weight: 950;
+      font-size: 16px;
       white-space: nowrap;
     }
 
-    .docsHint{
-      margin-top: 6px;
-      color: var(--muted);
-      font-weight: 750;
-    }
-
     .list{
-      margin-top: 14px;
+      margin-top: 16px;
       display:flex;
       flex-direction:column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .docRow{
@@ -249,99 +264,169 @@
       gap: 14px;
       align-items:center;
       justify-content:space-between;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 18px;
+      padding: 16px;
       background: #fff;
-      box-shadow: 0 6px 18px rgba(2,6,23,.05);
+      box-shadow: var(--shadowSoft);
     }
 
     .docLeft{
       display:flex;
-      gap: 12px;
+      gap: 14px;
       align-items:center;
       min-width: 0;
       flex: 1 1 auto;
     }
 
-    .docIcon{
-      width: 54px;
-      height: 54px;
-      border-radius: 16px;
+    /* Illustration tile (Preview-like) */
+    .illus{
+      width: 74px;
+      height: 74px;
+      border-radius: 18px;
+      position: relative;
+      flex: 0 0 auto;
+      border: 1px solid rgba(15,23,42,.10);
+      box-shadow: 0 14px 22px rgba(2,6,23,.06);
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.2));
+    }
+
+    .illusBg{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, var(--tintA), var(--tintB));
+      opacity: 1;
+    }
+
+    .paper{
+      position:absolute;
+      left: 16px; top: 14px;
+      width: 44px; height: 52px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(15,23,42,.10);
+      box-shadow: 0 10px 18px rgba(2,6,23,.05);
+    }
+    .paper:before{
+      content:"";
+      position:absolute;
+      right: 0; top: 0;
+      width: 16px; height: 16px;
+      background: rgba(15,23,42,.06);
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
+      border-top-right-radius: 12px;
+    }
+    .lines{
+      position:absolute;
+      left: 22px; top: 26px;
+      width: 32px; height: 22px;
+      opacity: .85;
+    }
+    .lines div{
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.16);
+      margin-bottom: 5px;
+    }
+    .lines div:nth-child(2){ width: 26px; opacity: .85; }
+    .lines div:nth-child(3){ width: 18px; opacity: .75; }
+
+    .checkBadge{
+      position:absolute;
+      right: 10px; bottom: 10px;
+      width: 26px; height: 26px;
+      border-radius: 999px;
       display:grid;
       place-items:center;
-      flex: 0 0 auto;
-      border: 1px solid rgba(15,23,42,.08);
-      background: linear-gradient(180deg, rgba(31,111,235,.10), rgba(0,184,148,.08));
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(15,23,42,.12);
+      box-shadow: 0 10px 18px rgba(2,6,23,.06);
     }
-    .docIcon svg{ width: 28px; height: 28px; color: #0f172a; opacity: .92; }
+    .checkBadge svg{ width: 16px; height: 16px; color: var(--accent); }
 
     .docMain{ min-width: 0; }
-    .docName{
+    .docTitle{
       margin: 0;
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 1000;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
       overflow:hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       max-width: 520px;
     }
-    .docSub{
+    .docType{
       margin-top: 6px;
-      color: var(--muted);
-      font-weight: 800;
+      font-weight: 900;
+      color: rgba(15,23,42,.70);
+      font-size: 16px;
     }
     .docId{
       margin-top: 6px;
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 750;
       word-break: break-word;
     }
 
-    .btn{
+    /* Soft Button with PDF chip (Preview-like) */
+    .openBtn{
       display:inline-flex;
       align-items:center;
-      gap: 10px;
-      justify-content:center;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: var(--btnBg);
-      color: var(--btnFg);
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,.12);
+      background: rgba(255,255,255,.75);
+      box-shadow: 0 10px 18px rgba(2,6,23,.05);
+      color: #12458f;
       text-decoration:none;
-      font-size: 13px;
       font-weight: 950;
-      border: 1px solid rgba(15,23,42,.15);
-      transition: background .15s ease, transform .15s ease;
+      font-size: 16px;
       white-space: nowrap;
-      flex: 0 0 auto;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
     }
-    .btn:hover{ background: var(--btnHover); transform: translateY(-1px); }
-    .btn svg{ width: 18px; height: 18px; }
+    .openBtn:hover{
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 16px 26px rgba(2,6,23,.08);
+      transform: translateY(-1px);
+    }
 
-    .mono{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono";
+    .pdfChip{
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(180deg, var(--accentSoft), rgba(255,255,255,.8));
+      border: 1px solid rgba(15,23,42,.10);
+      color: var(--accent);
+      font-weight: 1000;
       font-size: 12px;
+      letter-spacing: .02em;
     }
 
     .empty{
-      padding: 14px;
-      border-radius: 16px;
+      padding: 16px;
+      border-radius: 18px;
       border: 1px dashed rgba(15,23,42,.22);
-      background: rgba(255,255,255,.7);
+      background: rgba(255,255,255,.75);
       color: var(--muted);
-      font-weight: 800;
+      font-weight: 850;
       line-height: 1.35;
+      font-size: 16px;
     }
 
-    /* Responsive: doc row stacks on mobile */
+    /* Mobile */
     @media (max-width: 720px){
-      .brandTitle{ font-size: 30px; }
+      body{ padding: 14px; }
+      .card{ padding: 16px; }
+      .brandTitle{ font-size: 34px; }
+      .rolePill{ font-size: 15px; padding: 10px 14px; }
+
       .docRow{ flex-direction:column; align-items:stretch; }
-      .btn{ width: 100%; justify-content:center; }
-      .docName{ max-width: 100%; }
+      .openBtn{ width: 100%; justify-content:center; }
+      .docTitle{ max-width: 100%; }
     }
 
     /* Debug */
@@ -355,6 +440,10 @@
     }
     details summary::-webkit-details-marker{ display:none; }
 
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono";
+      font-size: 12px;
+    }
     .debugBox{
       white-space:pre-wrap;
       word-break:break-word;
@@ -370,12 +459,11 @@
 <body>
 <div class="wrap">
 
-  <!-- HEADER -->
+  <!-- HEADER + STATUS -->
   <div class="card">
     <div class="topbar">
       <div class="brand">
         <div class="logo" aria-hidden="true">
-          <!-- Briefcase -->
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M9 7V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <path d="M4 9h16v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -387,15 +475,13 @@
           <div class="brandSub">Sicherer Zugriff auf freigegebene Mietunterlagen – live aktualisiert</div>
         </div>
       </div>
-
       <div class="rolePill">Vermieteransicht</div>
     </div>
 
-    <!-- STATUS PANEL -->
-    <div class="statusCard">
+    <div class="statusWrap">
       <div class="statusHeader">
         <div class="statusLeft">
-          <div class="dotIcon" aria-hidden="true">
+          <div class="statusIcon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -405,29 +491,23 @@
         <span id="conn" class="badge">Verbinden…</span>
       </div>
 
-      <div class="miniRow">
+      <div class="statusLine">
         <span id="statusBadge" class="badge">Status: …</span>
-        <span id="statusText" class="docsHint">–</span>
+        <span id="statusText" class="statusText">–</span>
       </div>
 
-      <div class="miniRow">
-        <div class="miniChip">
-          <!-- eye -->
+      <div class="kpiRow">
+        <div class="kpi">
           <svg viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="2"/><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2"/></svg>
-          <span class="muted">Aufrufe</span>
-          <span id="views">–</span>
+          <span class="muted">Aufrufe</span> <span id="views">–</span>
         </div>
-        <div class="miniChip">
-          <!-- clock -->
+        <div class="kpi">
           <svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <span class="muted">Zuletzt angesehen</span>
-          <span id="lastViewed">–</span>
+          <span class="muted">Zuletzt angesehen</span> <span id="lastViewed">–</span>
         </div>
-        <div class="miniChip">
-          <!-- check -->
+        <div class="kpi">
           <svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="muted">Ausgewählt</span>
-          <span id="selCount">–</span>
+          <span class="muted">Ausgewählt</span> <span id="selCount">–</span>
         </div>
       </div>
 
@@ -437,18 +517,17 @@
 
   <!-- DOCUMENTS -->
   <div class="card">
-    <div class="docsTop">
+    <div class="docsHeader">
       <div>
         <div class="docsTitle">
-          <!-- folder -->
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7Z"
-              stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
           </svg>
           Freigegebene Dokumente
         </div>
-        <div class="docsHint" id="docsHint">Warte auf Updates…</div>
+        <div class="docsSub" id="docsHint">Warte auf Updates…</div>
       </div>
+
       <div class="docsCount" id="docsCount">– Dokumente freigegeben</div>
     </div>
 
@@ -522,6 +601,8 @@
     setDocsCount(0);
     elDocsHint.textContent = "Fehler: URL unvollständig";
     elDocs.innerHTML = `<div class="empty">Fehlende Parameter in der URL: <span class="mono">shareId</span> und <span class="mono">t</span>.</div>`;
+    if (elDbgUrl) elDbgUrl.textContent = "";
+    if (elDbgJson) elDbgJson.textContent = "";
     return;
   }
 
@@ -534,6 +615,13 @@
   }
 
   const FUNCTIONS_BASE = "https://cylqwswkekqwfefqmgya.functions.supabase.co";
+  const streamUrl =
+    FUNCTIONS_BASE + "/share_stream" +
+    "?shareId=" + encodeURIComponent(shareId) +
+    "&t=" + encodeURIComponent(token) +
+    "&v=" + encodeURIComponent(viewerId);
+
+  if (elDbgUrl) elDbgUrl.textContent = streamUrl;
 
   function buildDownloadUrl(docId) {
     return (
@@ -544,14 +632,6 @@
       "&docId=" + encodeURIComponent(docId)
     );
   }
-
-  const streamUrl =
-    FUNCTIONS_BASE + "/share_stream" +
-    "?shareId=" + encodeURIComponent(shareId) +
-    "&t=" + encodeURIComponent(token) +
-    "&v=" + encodeURIComponent(viewerId);
-
-  elDbgUrl.textContent = streamUrl;
 
   function extractDocs(payload) {
     if (Array.isArray(payload)) return payload;
@@ -576,51 +656,54 @@
     return docs.filter(d => d && d.id && set.has(d.id) && !d.missing);
   }
 
-  function iconSvgForType(type) {
+  function themeForType(type) {
     const t = String(type || "").toLowerCase();
 
-    // SCHUFA / Bonität
+    // SCHUFA (blue)
     if (t.includes("schufa") || t.includes("bon")) {
-      return `<svg viewBox="0 0 24 24" fill="none">
-        <path d="M7 11h10M7 15h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-        <path d="M14 3v5h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M9 19l1.5 1.5L14 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`;
+      return {
+        tintA: "rgba(129,200,255,.55)",
+        tintB: "rgba(207,233,255,.50)",
+        accent: "#2b6cb0",
+        accentSoft: "rgba(43,108,176,.18)",
+        pretty: "SCHUFA-Auskunft",
+        subtitle: "Bonitätsnachweis",
+      };
     }
 
-    // Einkommen / Gehalt
-    if (t.includes("gehalt") || t.includes("income") || t.includes("salary") || t.includes("lohn")) {
-      return `<svg viewBox="0 0 24 24" fill="none">
-        <path d="M12 3v18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M17 7.5c0-1.9-2.1-3.5-5-3.5S7 5.6 7 7.5 9.1 11 12 11s5 1.6 5 3.5S14.9 18 12 18s-5-1.6-5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>`;
+    // Income (green)
+    if (t.includes("income") || t.includes("gehalt") || t.includes("salary") || t.includes("lohn")) {
+      return {
+        tintA: "rgba(153,230,192,.55)",
+        tintB: "rgba(220,246,235,.50)",
+        accent: "#0b6b2f",
+        accentSoft: "rgba(11,107,47,.16)",
+        pretty: "Gehaltsnachweis",
+        subtitle: "Einkommensnachweis",
+      };
     }
 
-    // Ausweis
+    // ID (beige)
     if (t.includes("ausweis") || t.includes("id") || t.includes("ident")) {
-      return `<svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7Z" stroke="currentColor" stroke-width="2"/>
-        <path d="M9 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" stroke-width="2"/>
-        <path d="M7 18a4 4 0 0 1 8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M14 9h5M14 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>`;
+      return {
+        tintA: "rgba(245,220,170,.55)",
+        tintB: "rgba(252,244,228,.55)",
+        accent: "#8a6d3b",
+        accentSoft: "rgba(138,109,59,.16)",
+        pretty: "Personalausweis",
+        subtitle: "Identitätsnachweis",
+      };
     }
 
-    // Default Dokument
-    return `<svg viewBox="0 0 24 24" fill="none">
-      <path d="M8 3h6l4 4v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M14 3v5h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M9 13h6M9 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>`;
-  }
-
-  function prettyType(type) {
-    const t = String(type || "").trim();
-    if (!t) return "Dokument";
-    if (t.toLowerCase() === "schufa") return "SCHUFA-Auskunft";
-    if (t.toLowerCase() === "income_proof") return "Gehaltsnachweis";
-    return t.charAt(0).toUpperCase() + t.slice(1);
+    // Default (neutral)
+    return {
+      tintA: "rgba(210,222,238,.55)",
+      tintB: "rgba(244,247,252,.55)",
+      accent: "#334155",
+      accentSoft: "rgba(51,65,85,.14)",
+      pretty: "Dokument",
+      subtitle: "Unterlage",
+    };
   }
 
   function renderDocs(docs, selectedIds, payload) {
@@ -629,8 +712,7 @@
     setDocsCount(count);
 
     if (payload && payload.missing) {
-      const ids = Array.isArray(payload.missingIds) ? payload.missingIds : [];
-      showWarn(`Hinweis: ${ids.length} Dokument(e) sind nicht mehr verfügbar und werden ausgeblendet.`);
+      showWarn("Hinweis: Einige Dokumente sind nicht mehr verfügbar und werden ausgeblendet.");
     } else {
       showWarn("");
     }
@@ -643,7 +725,7 @@
 
     if (!Array.isArray(docs) || docs.length === 0) {
       elDocsHint.textContent = "Auswahl ist leer (Dokumente fehlen oder wurden entfernt).";
-      elDocs.innerHTML = `<div class="empty">Die freigegebenen Dokumente sind gerade nicht verfügbar. Bitte aktualisieren Sie die Seite oder warten Sie kurz.</div>`;
+      elDocs.innerHTML = `<div class="empty">Die freigegebenen Dokumente sind gerade nicht verfügbar. Bitte warten Sie kurz oder laden Sie die Seite neu.</div>`;
       return;
     }
 
@@ -655,26 +737,43 @@
       const type  = (d && (d.type  ?? d.mime)) || "";
       const openUrl = buildDownloadUrl(d.id);
 
+      const th = themeForType(type);
+
       const row = document.createElement("div");
       row.className = "docRow";
+      row.style.setProperty("--tintA", th.tintA);
+      row.style.setProperty("--tintB", th.tintB);
+      row.style.setProperty("--accent", th.accent);
+      row.style.setProperty("--accentSoft", th.accentSoft);
+
       row.innerHTML = `
         <div class="docLeft">
-          <div class="docIcon" aria-hidden="true">${iconSvgForType(type)}</div>
+          <div class="illus" aria-hidden="true">
+            <div class="illusBg"></div>
+            <div class="paper"></div>
+            <div class="lines">
+              <div></div><div></div><div></div>
+            </div>
+            <div class="checkBadge">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
           <div class="docMain">
-            <div class="docName">${esc(title)}</div>
-            <div class="docSub">${esc(prettyType(type))}</div>
+            <div class="docTitle">${esc(title)}</div>
+            <div class="docType">${esc(th.pretty)}</div>
             <div class="docId mono">${esc(d.id)}</div>
           </div>
         </div>
-        <a class="btn" href="${esc(openUrl)}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M15 3h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 14 21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M21 14v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-          </svg>
+
+        <a class="openBtn" href="${esc(openUrl)}" target="_blank" rel="noopener">
+          <span class="pdfChip">PDF</span>
           Dokument öffnen
         </a>
       `;
+
       elDocs.appendChild(row);
     }
   }
@@ -682,7 +781,7 @@
   function handleUpdate(ev) {
     try {
       const payload = JSON.parse(ev.data);
-      elDbgJson.textContent = JSON.stringify(payload, null, 2);
+      if (elDbgJson) elDbgJson.textContent = JSON.stringify(payload, null, 2);
 
       const selectedIds = extractSelectedIds(payload);
       const rawDocs = extractDocs(payload);
@@ -690,7 +789,7 @@
 
       renderDocs(docs, selectedIds, payload);
     } catch (e) {
-      elDbgJson.textContent = "JSON Parse Error:\n" + String(ev.data);
+      if (elDbgJson) elDbgJson.textContent = "JSON Parse Error:\n" + String(ev.data);
     }
   }
 
@@ -700,12 +799,7 @@
   setDocsCount(0);
 
   // SSE
-  const es = new EventSource(
-    "https://cylqwswkekqwfefqmgya.functions.supabase.co/share_stream" +
-    "?shareId=" + encodeURIComponent(shareId) +
-    "&t=" + encodeURIComponent(token) +
-    "&v=" + encodeURIComponent(viewerId)
-  );
+  const es = new EventSource(streamUrl);
 
   es.addEventListener("open", () => setConn("Live verbunden", true));
   es.addEventListener("error", () => setConn("Reconnecting…", false));
