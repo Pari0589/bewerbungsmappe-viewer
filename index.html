@@ -215,57 +215,71 @@
   }
 
   function renderDocs(docs, selectedIds, payload) {
-    // Ausgewählt = Anzahl ausgewählter IDs (nicht nur docs.length)
-    elSelCount.textContent = String(Array.isArray(selectedIds) ? selectedIds.length : 0);
-    elDocs.innerHTML = "";
+  elSelCount.textContent = String(Array.isArray(selectedIds) ? selectedIds.length : 0);
+  elDocs.innerHTML = "";
 
-    // Warnung, falls Backend missing meldet
-    if (payload && payload.missing) {
-      const ids = Array.isArray(payload.missingIds) ? payload.missingIds : [];
-      const short = ids.slice(0, 3).join(", ");
-      const more = ids.length > 3 ? ` (+${ids.length - 3} weitere)` : "";
-      showWarn(`Hinweis: ${ids.length} Dokument(e) sind nicht mehr verfügbar und werden ausgeblendet. ${short}${more}`);
-    } else {
-      showWarn("");
-    }
-
-    if (!Array.isArray(selectedIds) || selectedIds.length === 0) {
-      elDocsHint.textContent = "Keine Dokumente ausgewählt.";
-      const li = document.createElement("li");
-      li.className = "muted";
-      li.textContent = "Keine Dokumente ausgewählt.";
-      elDocs.appendChild(li);
-      return;
-    }
-
-    if (!Array.isArray(docs) || docs.length === 0) {
-      // Es sind IDs ausgewählt, aber keine docs gekommen -> wahrscheinlich alles missing
-      elDocsHint.textContent = "Auswahl ist leer (Dokumente fehlen oder wurden entfernt).";
-      const li = document.createElement("li");
-      li.className = "muted";
-      li.textContent = "Auswahl ist leer (Dokumente fehlen oder wurden entfernt).";
-      elDocs.appendChild(li);
-      return;
-    }
-
-    elDocsHint.textContent = "Aktuelle Auswahl (live):";
-
-    docs.forEach((d) => {
-      const li = document.createElement("li");
-
-      const title = (d && (d.title ?? d.name)) || "(ohne Titel)";
-      const type  = (d && (d.type  ?? d.mime)) || "(ohne Typ)";
-      const openUrl = buildDownloadUrl(d.id);
-
-      li.innerHTML =
-        "<span class='doc-title'>" + esc(title) + "</span>" +
-        "<span class='pill'>" + esc(type) + "</span>" +
-        "<br><span class='mono'>" + esc(d.id) + "</span>" +
-        "<br><a href='" + esc(openUrl) + "' target='_blank' rel='noopener'>Dokument öffnen</a>";
-
-      elDocs.appendChild(li);
-    });
+  if (payload && payload.missing) {
+    const ids = Array.isArray(payload.missingIds) ? payload.missingIds : [];
+    showWarn(`Einige Dokumente sind nicht mehr verfügbar (${ids.length}).`);
+  } else {
+    showWarn("");
   }
+
+  if (!Array.isArray(selectedIds) || selectedIds.length === 0) {
+    elDocsHint.textContent = "Keine Dokumente ausgewählt.";
+    elDocs.innerHTML = "<li class='muted'>Keine Dokumente ausgewählt.</li>";
+    return;
+  }
+
+  elDocsHint.textContent = "Freigegebene Dokumente:";
+
+  docs.forEach((d) => {
+    const li = document.createElement("li");
+    li.style.listStyle = "none";
+    li.style.marginBottom = "14px";
+
+    const title = (d && (d.title ?? d.name)) || "(ohne Titel)";
+    const type  = (d && (d.type  ?? d.mime)) || "(ohne Typ)";
+    const openUrl = buildDownloadUrl(d.id);
+
+    li.innerHTML = `
+      <div style="
+        background:#ffffff;
+        border-radius:16px;
+        padding:16px;
+        box-shadow:0 6px 18px rgba(0,0,0,0.06);
+        transition:all .2s ease;
+      "
+      onmouseover="this.style.transform='translateY(-2px)'"
+      onmouseout="this.style.transform='translateY(0)'"
+      >
+        <div style="font-size:16px;font-weight:900;margin-bottom:4px;">
+          ${esc(title)}
+        </div>
+        <div style="font-size:13px;color:#666;margin-bottom:8px;">
+          ${esc(type)}
+        </div>
+        <a href="${esc(openUrl)}"
+           target="_blank"
+           rel="noopener"
+           style="
+             display:inline-block;
+             padding:8px 14px;
+             border-radius:999px;
+             background:#111;
+             color:#fff;
+             text-decoration:none;
+             font-size:13px;
+             font-weight:700;
+           ">
+           Dokument öffnen
+        </a>
+      </div>
+    `;
+
+    elDocs.appendChild(li);
+  });
+}
 
   function handleUpdate(ev) {
     try {
