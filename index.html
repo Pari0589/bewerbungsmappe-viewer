@@ -144,7 +144,7 @@
     );
   }
 
-  // ✅ FIX: streamUrl korrekt + stabil
+  // ✅ Stream URL
   const streamUrl =
     FUNCTIONS_BASE + "/share_stream" +
     "?shareId=" + encodeURIComponent(shareId) +
@@ -195,11 +195,41 @@
     return [];
   }
 
-  function renderDocs(docs) {
-    elSelCount.textContent = String(docs.length);
+  // ✅ NEU: effectiveSelectedIds bevorzugen
+  function extractSelectedIds(payload) {
+    if (!payload) return [];
+    const eff = payload.effectiveSelectedIds;
+    const sel = payload.selectedIds;
+
+    if (Array.isArray(eff)) return eff.filter(Boolean);
+    if (Array.isArray(sel)) return sel.filter(Boolean);
+    return [];
+  }
+
+  // ✅ NEU: filtert docs auf die IDs, die wirklich ausgewählt sind
+  function filterDocsToSelected(docs, selectedIds) {
+    if (!Array.isArray(docs)) return [];
+    if (!Array.isArray(selectedIds) || selectedIds.length === 0) return [];
+    const set = new Set(selectedIds);
+    return docs.filter(d => d && d.id && set.has(d.id) && !d.missing);
+  }
+
+  function renderDocs(docs, selectedIds, payload) {
+    // Ausgewählt = Anzahl ausgewählter IDs (nicht nur docs.length)
+    elSelCount.textContent = String(Array.isArray(selectedIds) ? selectedIds.length : 0);
     elDocs.innerHTML = "";
 
-    if (docs.length === 0) {
+    // Warnung, falls Backend missing meldet
+    if (payload && payload.missing) {
+      const ids = Array.isArray(payload.missingIds) ? payload.missingIds : [];
+      const short = ids.slice(0, 3).join(", ");
+      const more = ids.length > 3 ? ` (+${ids.length - 3} weitere)` : "";
+      showWarn(`Hinweis: ${ids.length} Dokument(e) sind nicht mehr verfügbar und werden ausgeblendet. ${short}${more}`);
+    } else {
+      showWarn("");
+    }
+
+    if (!Array.isArray(selectedIds) || selectedIds.length === 0) {
       elDocsHint.textContent = "Keine Dokumente ausgewählt.";
       const li = document.createElement("li");
       li.className = "muted";
@@ -208,18 +238,20 @@
       return;
     }
 
+    if (!Array.isArray(docs) || docs.length === 0) {
+      // Es sind IDs ausgewählt, aber keine docs gekommen -> wahrscheinlich alles missing
+      elDocsHint.textContent = "Auswahl ist leer (Dokumente fehlen oder wurden entfernt).";
+      const li = document.createElement("li");
+      li.className = "muted";
+      li.textContent = "Auswahl ist leer (Dokumente fehlen oder wurden entfernt).";
+      elDocs.appendChild(li);
+      return;
+    }
+
     elDocsHint.textContent = "Aktuelle Auswahl (live):";
 
     docs.forEach((d) => {
       const li = document.createElement("li");
-
-      if (d && d.missing) {
-        li.innerHTML =
-          "<span class='doc-title'>Fehlt in documents_live</span><span class='pill'>missing</span>" +
-          "<br><span class='mono'>" + esc(d.id) + "</span>";
-        elDocs.appendChild(li);
-        return;
-      }
 
       const title = (d && (d.title ?? d.name)) || "(ohne Titel)";
       const type  = (d && (d.type  ?? d.mime)) || "(ohne Typ)";
@@ -239,18 +271,23 @@
     try {
       const payload = JSON.parse(ev.data);
       elDbgJson.textContent = JSON.stringify(payload, null, 2);
-      const docs = extractDocs(payload);
-      renderDocs(docs);
+
+      // 1) IDs bevorzugt aus effectiveSelectedIds holen
+      const selectedIds = extractSelectedIds(payload);
+
+      // 2) docs ziehen
+      const rawDocs = extractDocs(payload);
+
+      // 3) docs auf selectedIds filtern (und missing ausblenden)
+      const docs = filterDocsToSelected(rawDocs, selectedIds);
+
+      renderDocs(docs, selectedIds, payload);
     } catch (e) {
-      // ✅ Zeige Fehler im Debug
       elDbgJson.textContent = "JSON Parse Error:\n" + String(ev.data);
     }
   }
 
-  // ✅ Backend sendet event:update
   es.addEventListener("update", handleUpdate);
-
-  // ✅ Fallback: falls Backend default message sendet
   es.onmessage = handleUpdate;
 
 })();
