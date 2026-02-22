@@ -3,41 +3,232 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bewerbungsmappe – Viewer</title>
+  <title>Bewerbungsmappe – Sichere Dokumentenfreigabe</title>
   <style>
-    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
-    body { margin:0; background:#f6f7f9; color:#111; padding:20px; }
-    .wrap { max-width: 900px; margin: 0 auto; }
-    .card { background:#fff; border-radius:14px; padding:18px; box-shadow: 0 6px 24px rgba(0,0,0,.06); margin-bottom:14px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
-    .title { margin:0; font-size:20px; font-weight:800; }
-    .badge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:800; font-size:13px; background:#eee; }
-    .ok { background:#e8f7ee; color:#0b6b2f; }
-    .bad { background:#fdecec; color:#8a1414; }
-    .muted { color:#666; }
-    .kv { display:flex; gap:18px; flex-wrap:wrap; margin-top:10px; }
+    :root {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --shadow: 0 10px 30px rgba(2, 6, 23, .08);
+      --shadow-soft: 0 6px 18px rgba(2, 6, 23, .06);
+      --radius: 18px;
+
+      --ok-bg: #e8f7ee;
+      --ok-fg: #0b6b2f;
+
+      --bad-bg: #fdecec;
+      --bad-fg: #8a1414;
+
+      --warn-bg: #fff7e6;
+      --warn-fg: #7a4b00;
+
+      --pill-bg: #f1f5f9;
+      --pill-fg: #334155;
+
+      --btn-bg: #0f172a;
+      --btn-fg: #ffffff;
+      --btn-bg-hover: #111c33;
+
+      --border: rgba(15, 23, 42, .10);
+    }
+
+    body { margin:0; background:var(--bg); color:var(--text); padding:22px; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+
+    .card {
+      background:var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      border: 1px solid rgba(15, 23, 42, .06);
+    }
+
+    .row {
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .title {
+      margin:0;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      display:block;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:13px;
+      background: #eef2f6;
+      color: #1f2937;
+      border: 1px solid rgba(15, 23, 42, .08);
+    }
+    .ok { background: var(--ok-bg); color: var(--ok-fg); border-color: rgba(11,107,47,.20); }
+    .bad { background: var(--bad-bg); color: var(--bad-fg); border-color: rgba(138,20,20,.18); }
+
+    .muted { color: var(--muted); }
+    .kv { display:flex; gap:18px; flex-wrap:wrap; margin-top:12px; }
     .kv > div { min-width: 180px; }
-    .label { font-size:12px; color:#666; margin-bottom:4px; }
-    .value { font-size:14px; font-weight:700; }
-    ul { margin:10px 0 0; padding-left:18px; }
-    li { margin-bottom:10px; }
-    .doc-title { font-weight:800; }
-    .pill { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; background:#f0f0f0; font-size:12px; font-weight:800; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; font-size:12px; }
-    .warn { background:#fff7e6; color:#7a4b00; padding:10px 12px; border-radius:12px; }
-    a { font-weight: 800; }
+    .label { font-size:12px; color:var(--muted); margin-bottom:4px; }
+    .value { font-size:14px; font-weight:900; }
+
+    .warn {
+      background: var(--warn-bg);
+      color: var(--warn-fg);
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(122,75,0,.18);
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono";
+      font-size: 12px;
+    }
+
+    /* Docs list -> cards */
+    ul { margin:12px 0 0; padding:0; }
+    li { list-style:none; }
+
+    .docs-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (min-width: 760px) {
+      .docs-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .doc-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .doc-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 34px rgba(2, 6, 23, .10);
+    }
+
+    .doc-title {
+      font-size: 16px;
+      font-weight: 1000;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.01em;
+    }
+
+    .doc-meta {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--pill-bg);
+      color: var(--pill-fg);
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid rgba(51,65,85,.10);
+    }
+
+    .doc-id {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 12px 0;
+      word-break: break-word;
+    }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--btn-bg);
+      color: var(--btn-fg);
+      text-decoration:none;
+      font-size: 13px;
+      font-weight: 900;
+      border: 1px solid rgba(15, 23, 42, .15);
+      transition: background .15s ease, transform .15s ease;
+      user-select: none;
+    }
+    .btn:hover { background: var(--btn-bg-hover); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Debug collapse */
+    details summary {
+      cursor: pointer;
+      user-select: none;
+      font-weight: 900;
+      color: var(--text);
+    }
+    details summary::-webkit-details-marker { display:none; }
+    .debug-box {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 12px 0 0;
+      background: #fafafa;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(15,23,42,.08);
+    }
+
+    .topbar {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
+    }
   </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="card">
-    <div class="row">
-      <h1 class="title">Bewerbungsmappe</h1>
+    <div class="topbar">
+      <div>
+        <h1 class="title">Bewerbungsmappe
+          <span class="subtitle">Sichere Dokumentenfreigabe – live aktualisiert</span>
+        </h1>
+      </div>
       <span id="conn" class="badge">Verbinden…</span>
     </div>
 
-    <div class="row" style="justify-content:flex-start; margin-top:10px;">
+    <div class="row" style="justify-content:flex-start; margin-top:12px;">
       <span id="statusBadge" class="badge">Status: …</span>
       <span id="statusText" class="muted">–</span>
     </div>
@@ -62,18 +253,19 @@
 
   <div class="card">
     <div class="row" style="justify-content:flex-start;">
-      <div style="font-size:16px;font-weight:900;">Dokumente</div>
-      <div class="muted" id="docsHint">Warte auf Updates…</div>
+      <div style="font-size:16px;font-weight:1000;">Dokumente</div>
+      <div class="hint" id="docsHint">Warte auf Updates…</div>
     </div>
-    <ul id="docs"></ul>
+
+    <div id="docs" class="docs-grid"></div>
   </div>
 
   <div class="card">
-    <div class="row" style="justify-content:flex-start;">
-      <div style="font-size:16px;font-weight:900;">Debug (optional)</div>
-      <div class="muted mono" id="dbgUrl"></div>
-    </div>
-    <pre class="mono" id="dbgJson" style="white-space:pre-wrap; word-break:break-word; margin:10px 0 0; background:#fafafa; border-radius:12px; padding:12px;"></pre>
+    <details>
+      <summary>Debug (optional)</summary>
+      <div class="muted mono" id="dbgUrl" style="margin-top:10px;"></div>
+      <pre class="mono debug-box" id="dbgJson"></pre>
+    </details>
   </div>
 
 </div>
@@ -100,18 +292,22 @@
     elConn.textContent = text;
     elConn.className = "badge " + (ok ? "ok" : "bad");
   }
+
   function setStatus(ok, label, msg) {
     elStatusBadge.textContent = "Status: " + label;
     elStatusBadge.className = "badge " + (ok ? "ok" : "bad");
     elStatusText.textContent = msg || "";
   }
+
   function fmtDate(iso) {
     if (!iso) return "–";
     try { return new Date(iso).toLocaleString(); } catch (_) { return iso; }
   }
+
   function esc(s) {
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
+
   function showWarn(text) {
     elWarn.style.display = text ? "block" : "none";
     elWarn.textContent = text || "";
@@ -144,7 +340,6 @@
     );
   }
 
-  // ✅ Stream URL
   const streamUrl =
     FUNCTIONS_BASE + "/share_stream" +
     "?shareId=" + encodeURIComponent(shareId) +
@@ -185,7 +380,6 @@
     } catch (_) {}
   });
 
-  // ✅ Robust: akzeptiert data.documents, data.docs oder direkt Array
   function extractDocs(payload) {
     if (Array.isArray(payload)) return payload;
     if (payload && Array.isArray(payload.documents)) return payload.documents;
@@ -195,18 +389,15 @@
     return [];
   }
 
-  // ✅ NEU: effectiveSelectedIds bevorzugen
   function extractSelectedIds(payload) {
     if (!payload) return [];
     const eff = payload.effectiveSelectedIds;
     const sel = payload.selectedIds;
-
     if (Array.isArray(eff)) return eff.filter(Boolean);
     if (Array.isArray(sel)) return sel.filter(Boolean);
     return [];
   }
 
-  // ✅ NEU: filtert docs auf die IDs, die wirklich ausgewählt sind
   function filterDocsToSelected(docs, selectedIds) {
     if (!Array.isArray(docs)) return [];
     if (!Array.isArray(selectedIds) || selectedIds.length === 0) return [];
@@ -215,84 +406,62 @@
   }
 
   function renderDocs(docs, selectedIds, payload) {
-  elSelCount.textContent = String(Array.isArray(selectedIds) ? selectedIds.length : 0);
-  elDocs.innerHTML = "";
+    // counts
+    elSelCount.textContent = String(Array.isArray(selectedIds) ? selectedIds.length : 0);
 
-  if (payload && payload.missing) {
-    const ids = Array.isArray(payload.missingIds) ? payload.missingIds : [];
-    showWarn(`Einige Dokumente sind nicht mehr verfügbar (${ids.length}).`);
-  } else {
-    showWarn("");
-  }
+    // warnings (missing)
+    if (payload && payload.missing) {
+      const ids = Array.isArray(payload.missingIds) ? payload.missingIds : [];
+      const short = ids.slice(0, 3).join(", ");
+      const more = ids.length > 3 ? ` (+${ids.length - 3} weitere)` : "";
+      showWarn(`Hinweis: ${ids.length} Dokument(e) sind nicht mehr verfügbar und werden ausgeblendet. ${short}${more}`);
+    } else {
+      showWarn("");
+    }
 
-  if (!Array.isArray(selectedIds) || selectedIds.length === 0) {
-    elDocsHint.textContent = "Keine Dokumente ausgewählt.";
-    elDocs.innerHTML = "<li class='muted'>Keine Dokumente ausgewählt.</li>";
-    return;
-  }
+    // empty states
+    if (!Array.isArray(selectedIds) || selectedIds.length === 0) {
+      elDocsHint.textContent = "Keine Dokumente ausgewählt.";
+      elDocs.innerHTML = "<div class='muted'>Keine Dokumente ausgewählt.</div>";
+      return;
+    }
 
-  elDocsHint.textContent = "Freigegebene Dokumente:";
+    if (!Array.isArray(docs) || docs.length === 0) {
+      elDocsHint.textContent = "Auswahl ist leer (Dokumente fehlen oder wurden entfernt).";
+      elDocs.innerHTML = "<div class='muted'>Auswahl ist leer (Dokumente fehlen oder wurden entfernt).</div>";
+      return;
+    }
 
-  docs.forEach((d) => {
-    const li = document.createElement("li");
-    li.style.listStyle = "none";
-    li.style.marginBottom = "14px";
+    elDocsHint.textContent = "Freigegebene Dokumente (live):";
 
-    const title = (d && (d.title ?? d.name)) || "(ohne Titel)";
-    const type  = (d && (d.type  ?? d.mime)) || "(ohne Typ)";
-    const openUrl = buildDownloadUrl(d.id);
+    // render cards
+    elDocs.innerHTML = "";
+    for (const d of docs) {
+      const title = (d && (d.title ?? d.name)) || "(ohne Titel)";
+      const type  = (d && (d.type  ?? d.mime)) || "(ohne Typ)";
+      const openUrl = buildDownloadUrl(d.id);
 
-    li.innerHTML = `
-      <div style="
-        background:#ffffff;
-        border-radius:16px;
-        padding:16px;
-        box-shadow:0 6px 18px rgba(0,0,0,0.06);
-        transition:all .2s ease;
-      "
-      onmouseover="this.style.transform='translateY(-2px)'"
-      onmouseout="this.style.transform='translateY(0)'"
-      >
-        <div style="font-size:16px;font-weight:900;margin-bottom:4px;">
-          ${esc(title)}
+      const card = document.createElement("div");
+      card.className = "doc-card";
+      card.innerHTML = `
+        <div class="doc-title">${esc(title)}</div>
+        <div class="doc-meta">
+          <span class="pill">${esc(type)}</span>
         </div>
-        <div style="font-size:13px;color:#666;margin-bottom:8px;">
-          ${esc(type)}
-        </div>
-        <a href="${esc(openUrl)}"
-           target="_blank"
-           rel="noopener"
-           style="
-             display:inline-block;
-             padding:8px 14px;
-             border-radius:999px;
-             background:#111;
-             color:#fff;
-             text-decoration:none;
-             font-size:13px;
-             font-weight:700;
-           ">
-           Dokument öffnen
-        </a>
-      </div>
-    `;
-
-    elDocs.appendChild(li);
-  });
-}
+        <div class="doc-id mono">${esc(d.id)}</div>
+        <a class="btn" href="${esc(openUrl)}" target="_blank" rel="noopener">Dokument öffnen</a>
+      `;
+      elDocs.appendChild(card);
+    }
+  }
 
   function handleUpdate(ev) {
     try {
       const payload = JSON.parse(ev.data);
       elDbgJson.textContent = JSON.stringify(payload, null, 2);
 
-      // 1) IDs bevorzugt aus effectiveSelectedIds holen
       const selectedIds = extractSelectedIds(payload);
-
-      // 2) docs ziehen
       const rawDocs = extractDocs(payload);
-
-      // 3) docs auf selectedIds filtern (und missing ausblenden)
       const docs = filterDocsToSelected(rawDocs, selectedIds);
 
       renderDocs(docs, selectedIds, payload);
